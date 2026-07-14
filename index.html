@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Speaking Practice</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- React and ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <!-- Babel for JSX compilation in browser -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <!-- Font Awesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            background-color: #f0fdfa; /* light teal background */
+            touch-action: manipulation;
+        }
+        .bounce {
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { transform: translateY(-5%); }
+            50% { transform: translateY(0); }
+        }
+        .gacha-flash {
+            animation: flash 1s ease-out;
+        }
+        @keyframes flash {
+            0% { background-color: #fff; }
+            100% { background-color: transparent; }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const PHRASES = [
+            { id: 1, ja: "【書道教室】これは書道教室です。", en: "This is the calligraphy room.", kana: "ディス イズ ざ キャリグラフィ ルーム" },
+            { id: 2, ja: "【書道教室】ここで習字の練習をします。", en: "We practice calligraphy here.", kana: "ウィー プラクティス キャリグラフィ ヒア" },
+            { id: 3, ja: "【書道教室】大谷先生が書道の先生です。", en: "Mr. Otani is our calligraphy teacher.", kana: "ミスター オオタニ イズ アワ キャリグラフィ ティーチャー" },
+            
+            { id: 4, ja: "【体育館】これは体育館です。", en: "This is the gym.", kana: "ディス イズ ざ ジム" },
+            { id: 5, ja: "【体育館】ここで体育の授業をします。", en: "We have P.E. classes here.", kana: "ウィー ハヴ ピーイー クラセィズ ヒア" },
+            { id: 6, ja: "【体育館】学校行事もここで行います。", en: "We also have school events.", kana: "ウィー オールソー ハヴ スクール イベンツ" },
+            
+            { id: 7, ja: "【プール】これはオリンピックプールです。", en: "This is the Olympic Pool.", kana: "ディス イズ じ オリンピック プール" },
+            { id: 8, ja: "【プール】全長25メートルあります。", en: "It's 25 meters long.", kana: "イツ トゥウェンティ ファイヴ ミーターズ ロング" },
+            { id: 9, ja: "【プール】夏の間、ここで水泳の授業があります。", en: "We have swimming classes in summer.", kana: "ウィー ハヴ スウィミング クラセィズ イン サマー" },
+            
+            { id: 10, ja: "【図工室】これらは図工室です。", en: "These are the art rooms.", kana: "ジーズ アー じ アート ルームズ" },
+            { id: 11, ja: "【図工室】図画工作をここで学びます。", en: "We learn arts and crafts here.", kana: "ウィー ラーン アーツ アンド クラフツ ヒア" },
+            { id: 12, ja: "【図工室】西光先生が図工の先生です。", en: "Ms. Nishimitsu is our art teacher.", kana: "ミズ ニシミツ イズ アワ アート ティーチャー" },
+            
+            { id: 13, ja: "【ノーベル図書館】これはノーベル図書館です。", en: "This is the Nobel Library.", kana: "ディス イズ ざ ノーベル ライブラリ" },
+            { id: 14, ja: "【ノーベル図書館】池田先生が名前をつけてくださいました。", en: "Ikeda Sensei named it.", kana: "イケダセンセイ ネイムド イット" },
+            { id: 15, ja: "【ノーベル図書館】ここには3万冊の本があります。", en: "There are 30 thousands books here.", kana: "ゼア アー サーティ サウザンズ ブックス ヒア" },
+            
+            { id: 16, ja: "【音楽室】これは音楽室です。", en: "This is the music room.", kana: "ディス イズ ざ ミュージック ルーム" },
+            { id: 17, ja: "【音楽室】ここで歌を歌い、色々な楽器を演奏します。", en: "We sing and play some instruments here.", kana: "ウィー シング アンド プレイ サム インストゥルメンツ ヒア" },
+            { id: 18, ja: "【音楽室】堀先生と幸野先生が音楽の先生です。", en: "Ms. Hori and Ms. Kohno are our music teacher.", kana: "ミズ ホリ アンド ミズ コウノ アー アワ ミュージック ティーチャー" },
+            
+            { id: 19, ja: "【ワールドグラウンド】これはワールドグラウンドです。", en: "This is the World Ground.", kana: "ディス イズ ざ ワールド グラウンド" },
+            { id: 20, ja: "【ワールドグラウンド】ここで、体育の授業をします。", en: "We have P.E. classes here.", kana: "ウィー ハヴ ピーイー クラセィズ ヒア" },
+            { id: 21, ja: "【ワールドグラウンド】休み時間には、友達と遊びます。", en: "We also play with our friends during break.", kana: "ウィー オールソー プレイ ウィズ アワ フレンズ デュアリング ブレイク" },
+            
+            { id: 22, ja: "【最後のあいさつ】学校案内は楽しかったですか？", en: "Did you enjoy the campus tour?", kana: "ディジュ エンジョイ ざ キャンパス ツアー" },
+            { id: 23, ja: "【最後のあいさつ】体育館に行きましょう。", en: "Now, let's go to the gym.", kana: "ナウ レッツ ゴー トゥ ざ ジム" },
+            { id: 24, ja: "【最後のあいさつ】そこで、交換会があります。", en: "We are having an exchange meeting.", kana: "ウィー アー ハヴィング アン エクスチェンジ ミーティング" }
+        ];
+
+        const GACHA_ITEMS = [
+            { id: 1, name: "Dragon", kana: "ドラゴン", emoji: "🐉", rarity: "SSR", color: "text-red-600" },
+            { id: 2, name: "Unicorn", kana: "ユニコーン", emoji: "🦄", rarity: "SR", color: "text-purple-500" },
+            { id: 3, name: "Griffin", kana: "グリフィン", emoji: "🦅", rarity: "SR", color: "text-yellow-600" },
+            { id: 4, name: "Phoenix", kana: "フェニックス", emoji: "🔥", rarity: "SSR", color: "text-orange-500" },
+            { id: 5, name: "Pegasus", kana: "ペガサス", emoji: "🐎", rarity: "R", color: "text-blue-400" },
+            { id: 6, name: "Cerberus", kana: "ケルベロス", emoji: "🐕‍🦺", rarity: "SR", color: "text-gray-800" },
+            { id: 7, name: "Kraken", kana: "クラーケン", emoji: "🦑", rarity: "R", color: "text-blue-600" },
+            { id: 8, name: "Chimera", kana: "キメラ", emoji: "🦁", rarity: "R", color: "text-yellow-700" },
+            { id: 9, name: "Wyvern", kana: "ワイバーン", emoji: "🦎", rarity: "N", color: "text-green-600" },
+            { id: 10, name: "Leviathan", kana: "リヴァイアサン", emoji: "🐋", rarity: "SSR", color: "text-blue-500" },
+        ];
+
+        const { useState, useEffect, useRef } = React;
+
+        function App() {
+            const [screen, setScreen] = useState('intro'); // intro, select, practice, gacha
+            const [coins, setCoins] = useState(0);
+            const [selectedPhrase, setSelectedPhrase] = useState(null);
+            const [inventory, setInventory] = useState([]);
+
+            const addCoin = (amount = 1) => {
+                setCoins(prev => prev + amount);
+            };
+
+            const spendCoins = (amount) => {
+                if (coins >= amount) {
+                    setCoins(prev => prev - amount);
+                    return true;
+                }
+                return false;
+            };
+
+            const addGachaItem = (item) => {
+                setInventory(prev => [...prev, item]);
+            };
+
+            return (
+                <div className="max-w-md mx-auto min-h-screen bg-white shadow-lg relative flex flex-col overflow-hidden">
+                    {/* Header Info (hidden on intro) */}
+                    {screen !== 'intro' && (
+                        <div className="bg-teal-500 text-white p-4 flex justify-between items-center shadow-md z-10">
+                            <div className="font-bold text-lg flex items-center">
+                                <i className="fa-solid fa-coins text-yellow-300 mr-2"></i>
+                                {coins} Coins
+                            </div>
+                            {screen === 'select' && (
+                                <button 
+                                    onClick={() => setScreen('gacha')}
+                                    className="bg-yellow-400 hover:bg-yellow-500 text-yellow-900 px-4 py-2 rounded-full font-bold shadow-sm transition transform hover:scale-105"
+                                >
+                                    ガチャへ <i className="fa-solid fa-gift"></i>
+                                </button>
+                            )}
+                            {screen !== 'select' && screen !== 'intro' && (
+                                <button 
+                                    onClick={() => setScreen('select')}
+                                    className="text-white hover:text-teal-200"
+                                >
+                                    <i className="fa-solid fa-house text-xl"></i>
+                                </button>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Screens */}
+                    <div className="flex-1 overflow-y-auto">
+                        {screen === 'intro' && <IntroScreen onStart={() => setScreen('select')} />}
+                        {screen === 'select' && <SelectScreen onSelect={(phrase) => { setSelectedPhrase(phrase); setScreen('practice'); }} />}
+                        {screen === 'practice' && <PracticeScreen phrase={selectedPhrase} onBack={() => setScreen('select')} addCoin={addCoin} />}
+                        {screen === 'gacha' && <GachaScreen coins={coins} spendCoins={spendCoins} inventory={inventory} addGachaItem={addGachaItem} onBack={() => setScreen('select')} />}
+                    </div>
+                </div>
+            );
+        }
+
+        function IntroScreen({ onStart }) {
+            return (
+                <div className="flex flex-col items-center justify-center h-full min-h-screen p-6 text-center bg-teal-50">
+                    <div className="text-6xl text-teal-500 mb-6 bounce">
+                        <i className="fa-solid fa-headphones"></i>
+                    </div>
+                    <h1 className="text-2xl font-bold text-gray-800 mb-4">音声学習アプリへようこそ！</h1>
+                    <p className="text-gray-600 mb-8 leading-relaxed">
+                        より効果的に学習するため、<br/>
+                        <strong>イヤホンの着用</strong>をおすすめします。<br/>
+                        また、マイクのアクセス許可が必要です。
+                    </p>
+                    <button 
+                        onClick={onStart}
+                        className="bg-teal-500 hover:bg-teal-600 text-white font-bold py-4 px-8 rounded-full shadow-lg transition transform hover:scale-105 active:scale-95"
+                    >
+                        準備OK！はじめる
+                    </button>
+                </div>
+            );
+        }
+
+        function SelectScreen({ onSelect }) {
+            return (
+                <div className="p-4 pb-20">
+                    <h2 className="text-xl font-bold text-gray-800 mb-4 border-b-2 border-teal-200 pb-2">練習するフレーズを選ぼう</h2>
+                    <div className="flex flex-col space-y-3">
+                        {PHRASES.map(phrase => (
+                            <button
+                                key={phrase.id}
+                                onClick={() => onSelect(phrase)}
+                                className="bg-white border-2 border-gray-100 hover:border-teal-400 p-4 rounded-xl text-left shadow-sm transition transform hover:-translate-y-1"
+                            >
+                                <p className="text-gray-800 font-medium leading-snug">{phrase.ja}</p>
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            );
+        }
+
+        function PracticeScreen({ phrase, onBack, addCoin }) {
+            const [isPlaying, setIsPlaying] = useState(false);
+            const [isListening, setIsListening] = useState(false);
+            const [transcript, setTranscript] = useState('');
+            const [feedback, setFeedback] = useState('');
+            const [failCount, setFailCount] = useState(0);
+            const [isCleared, setIsCleared] = useState(false);
+
+            // Fuzzy match algorithm (checks if roughly half of the words match)
+            const checkAccuracy = (spokenText, targetText) => {
+                const normalize = (str) => {
+                    // Remove punctuation and convert to lower case
+                    return str.toLowerCase().replace(/[.,?!]/g, '').trim();
+                };
+                
+                const spokenWords = normalize(spokenText).split(/\s+/);
+                const targetWords = normalize(targetText).split(/\s+/);
+                
+                let matchCount = 0;
+                // Simple word intersection
+                targetWords.forEach(word => {
+                    if (spokenWords.includes(word)) {
+                        matchCount++;
+                        // Remove matched word to prevent double counting
+                        const index = spokenWords.indexOf(word);
+                        if (index > -1) spokenWords.splice(index, 1);
+                    }
+                });
+
+                const accuracy = matchCount / targetWords.length;
+                return accuracy >= 0.5; // Clear if at least half the words match
+            };
+
+            const playAudio = () => {
+                if (isPlaying) return;
+                
+                // Clear previous feedbacks when listening again
+                setFeedback('');
+                
+                if ('speechSynthesis' in window) {
+                    setIsPlaying(true);
+                    const utterance = new SpeechSynthesisUtterance(phrase.en);
+                    utterance.lang = 'en-US';
+                    utterance.rate = 0.85; // 少しゆっくりめに調整
+                    
+                    utterance.onend = () => {
+                        setIsPlaying(false);
+                        addCoin(1); // Give 1 coin for listening
+                        setFeedback('リスニング完了！ 1コインGET🪙');
+                    };
+
+                    utterance.onerror = () => {
+                        setIsPlaying(false);
+                        setFeedback('音声の再生に失敗しました。');
+                    };
+
+                    window.speechSynthesis.speak(utterance);
+                } else {
+                    alert("お使いのブラウザは音声読み上げに対応していません。");
+                }
+            };
+
+            const startListening = () => {
+                if (isListening || isPlaying) return;
+
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                if (!SpeechRecognition) {
+                    alert("お使いのブラウザは音声認識に対応していません。Chrome等をご利用ください。");
+                    return;
+                }
+
+                const recognition = new SpeechRecognition();
+                recognition.lang = 'en-US';
+                recognition.interimResults = false;
+                recognition.maxAlternatives = 1;
+
+                recognition.onstart = () => {
+                    setIsListening(true);
+                    setTranscript('');
+                    setFeedback('マイクに話しかけてください...');
+                };
+
+                recognition.onresult = (event) => {
+                    const speechResult = event.results[0][0].transcript;
+                    setTranscript(speechResult);
+                    
+                    const isSuccess = checkAccuracy(speechResult, phrase.en);
+                    
+                    if (isSuccess) {
+                        setFeedback('素晴らしい！Clear！✨ (1コインGET🪙)');
+                        setIsCleared(true);
+                        addCoin(1); // Coin for successful practice
+                    } else {
+                        setFailCount(prev => prev + 1);
+                        setFeedback(`惜しい！もう一度挑戦しよう。`);
+                        addCoin(1); // Still give 1 coin for the attempt
+                    }
+                };
+
+                recognition.onerror = (event) => {
+                    console.error("Speech recognition error", event.error);
+                    setFeedback(`エラーが発生しました: ${event.error}`);
+                };
+
+                recognition.onend = () => {
+                    setIsListening(false);
+                };
+
+                recognition.start();
+            };
+
+            const resetPractice = () => {
+                setTranscript('');
+                setFeedback('');
+                setFailCount(0);
+                setIsCleared(false);
+            };
+
+            return (
+                <div className="p-6 flex flex-col h-full items-center text-center">
+                    <div className="bg-white rounded-2xl shadow-sm border border-teal-100 p-6 w-full mb-6">
+                        <p className="text-sm text-teal-600 font-bold mb-2">日本語</p>
+                        <p className="text-base text-gray-800 font-medium mb-4">{phrase.ja}</p>
+                        
+                        <div className="h-px bg-gray-200 w-full mb-4"></div>
+                        
+                        <p className="text-sm text-teal-600 font-bold mb-2">英語（ターゲット）</p>
+                        <p className="text-xs text-gray-500 mb-1 tracking-wide">{phrase.kana}</p>
+                        <p className="text-xl text-gray-900 font-bold mb-4">{phrase.en}</p>
+                    </div>
+
+                    {/* Actions */}
+                    <div className="flex gap-4 mb-6 w-full px-4">
+                        <button 
+                            onClick={playAudio}
+                            disabled={isPlaying || isListening}
+                            className={`flex-1 flex flex-col items-center justify-center p-4 rounded-2xl text-white font-bold transition transform shadow-md
+                                ${isPlaying ? 'bg-gray-400 scale-95' : 'bg-blue-500 hover:bg-blue-600 hover:-translate-y-1 active:scale-95'}`}
+                        >
+                            <i className={`fa-solid fa-volume-high text-3xl mb-2 ${isPlaying ? 'animate-pulse' : ''}`}></i>
+                            <span>お手本を聞く</span>
+                        </button>
+
+                        <button 
+                            onClick={startListening}
+                            disabled={isPlaying || isListening || isCleared}
+                            className={`flex-1 flex flex-col items-center justify-center p-4 rounded-2xl text-white font-bold transition transform shadow-md
+                                ${isListening || isPlaying || isCleared ? 'bg-gray-400 scale-95' : 'bg-red-500 hover:bg-red-600 hover:-translate-y-1 active:scale-95'}`}
+                        >
+                            <i className={`fa-solid fa-microphone text-3xl mb-2 ${isListening ? 'animate-bounce' : ''}`}></i>
+                            <span>自分で発音する</span>
+                        </button>
+                    </div>
+
+                    {/* Feedback Area */}
+                    <div className="w-full bg-gray-50 rounded-xl p-4 min-h-[120px] flex flex-col items-center justify-center border-2 border-dashed border-gray-200">
+                        {transcript && (
+                            <p className="text-gray-600 italic mb-2">"{transcript}"</p>
+                        )}
+                        <p className={`font-bold text-lg ${isCleared ? 'text-green-500' : 'text-teal-600'}`}>
+                            {feedback || "ボタンを押して練習開始！"}
+                        </p>
+                        
+                        {/* Controls after attempts */}
+                        {isCleared && (
+                            <button onClick={onBack} className="mt-4 bg-teal-500 text-white px-6 py-2 rounded-full font-bold shadow hover:bg-teal-600">
+                                フレーズ選択に戻る <i className="fa-solid fa-arrow-right ml-1"></i>
+                            </button>
+                        )}
+
+                        {!isCleared && failCount >= 3 && (
+                            <button onClick={onBack} className="mt-4 bg-gray-400 text-white px-6 py-2 rounded-full font-bold shadow hover:bg-gray-500">
+                                スキップする <i className="fa-solid fa-forward ml-1"></i>
+                            </button>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        function GachaScreen({ coins, spendCoins, inventory, addGachaItem, onBack }) {
+            const [gachaResult, setGachaResult] = useState(null);
+            const [isRolling, setIsRolling] = useState(false);
+            const COST = 5;
+
+            const rollGacha = () => {
+                if (coins < COST) {
+                    alert("コインが足りません！");
+                    return;
+                }
+                
+                if (spendCoins(COST)) {
+                    setIsRolling(true);
+                    setGachaResult(null);
+
+                    // Simulate delay and animation
+                    setTimeout(() => {
+                        const randomIndex = Math.floor(Math.random() * GACHA_ITEMS.length);
+                        const wonItem = GACHA_ITEMS[randomIndex];
+                        
+                        setGachaResult(wonItem);
+                        addGachaItem(wonItem);
+                        setIsRolling(false);
+                    }, 1500);
+                }
+            };
+
+            return (
+                <div className={`p-6 min-h-full flex flex-col items-center transition-colors duration-500 ${isRolling ? 'bg-gray-800' : 'bg-indigo-50'}`}>
+                    <div className="w-full flex justify-between items-center mb-6">
+                        <h2 className={`text-2xl font-bold ${isRolling ? 'text-white' : 'text-indigo-900'}`}>
+                            モンスターガチャ
+                        </h2>
+                        <div className="bg-white px-4 py-1 rounded-full border-2 border-yellow-400 text-yellow-600 font-bold shadow-sm">
+                            必要: {COST} <i className="fa-solid fa-coins"></i>
+                        </div>
+                    </div>
+
+                    {/* Gacha Machine / Animation Area */}
+                    <div className="w-full max-w-sm aspect-square bg-white rounded-full border-8 border-indigo-200 shadow-xl flex items-center justify-center relative overflow-hidden mb-8">
+                        {isRolling ? (
+                            <div className="text-6xl animate-spin text-indigo-400">
+                                <i className="fa-solid fa-star"></i>
+                            </div>
+                        ) : gachaResult ? (
+                            <div className="flex flex-col items-center text-center gacha-flash w-full h-full justify-center bg-yellow-50">
+                                <span className={`text-sm font-bold border px-2 py-0.5 rounded mb-2 
+                                    ${gachaResult.rarity === 'SSR' ? 'border-red-500 text-red-500' : 
+                                      gachaResult.rarity === 'SR' ? 'border-purple-500 text-purple-500' : 'border-blue-500 text-blue-500'}`}>
+                                    {gachaResult.rarity}
+                                </span>
+                                <span className="text-8xl mb-4 bounce">{gachaResult.emoji}</span>
+                                <span className="text-2xl font-bold text-gray-800">{gachaResult.name}</span>
+                                <span className="text-sm text-gray-500 font-medium">{gachaResult.kana}</span>
+                            </div>
+                        ) : (
+                            <div className="text-center">
+                                <i className="fa-solid fa-box-open text-6xl text-indigo-200 mb-4 block"></i>
+                                <p className="text-gray-400 font-medium">ボタンを押して引く</p>
+                            </div>
+                        )}
+                    </div>
+
+                    <button 
+                        onClick={rollGacha}
+                        disabled={isRolling || coins < COST}
+                        className={`w-full max-w-xs py-4 rounded-full font-bold text-xl shadow-lg transition transform mb-8
+                            ${isRolling ? 'bg-gray-400 text-gray-200 cursor-not-allowed' : 
+                              coins < COST ? 'bg-gray-300 text-gray-500' : 'bg-yellow-400 hover:bg-yellow-500 text-yellow-900 hover:scale-105 active:scale-95'}`}
+                    >
+                        {isRolling ? 'ガチャリング中...' : 'ガチャを回す！'}
+                    </button>
+
+                    {/* Inventory */}
+                    <div className="w-full mt-auto bg-white p-4 rounded-2xl shadow-sm border border-indigo-100">
+                        <h3 className="text-sm font-bold text-gray-500 mb-3 border-b pb-2">コレクション ({inventory.length})</h3>
+                        <div className="flex flex-wrap gap-2 overflow-y-auto max-h-32">
+                            {inventory.length === 0 ? (
+                                <p className="text-xs text-gray-400 w-full text-center py-4">まだ何も持っていません</p>
+                            ) : (
+                                inventory.map((item, idx) => (
+                                    <div key={idx} className="bg-gray-50 border border-gray-200 rounded p-2 text-center w-16" title={item.name}>
+                                        <div className="text-2xl">{item.emoji}</div>
+                                        <div className="text-[10px] text-gray-600 truncate mt-1">{item.kana}</div>
+                                    </div>
+                                ))
+                            )}
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
