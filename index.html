@@ -63,7 +63,7 @@
             
             { id: 16, ja: "【音楽室】これは音楽室です。", en: "This is the music room.", kana: "ディス イズ ざ ミュージック ルーム" },
             { id: 17, ja: "【音楽室】ここで歌を歌い、色々な楽器を演奏します。", en: "We sing and play some instruments here.", kana: "ウィー シング アンド プレイ サム インストゥルメンツ ヒア" },
-            { id: 18, ja: "【音楽室】堀先生と幸野先生が音楽の先生です。", en: "Ms. Hori and Ms. Kohno are our music teacher.", kana: "ミズ ホリ アンド ミズ コウノ アー アワ ミュージック ティーチャー" },
+            { id: 18, ja: "【音楽室】堀先生と幸野先生が音楽の先生です。", en: "Ms. Hori and Ms. Kohno are our music teachers.", kana: "ミズ ホリ アンド ミズ コウノ アー アワ ミュージック ティーチャーズ" },
             
             { id: 19, ja: "【ワールドグラウンド】これはワールドグラウンドです。", en: "This is the World Ground.", kana: "ディス イズ ざ ワールド グラウンド" },
             { id: 20, ja: "【ワールドグラウンド】ここで、体育の授業をします。", en: "We have P.E. classes here.", kana: "ウィー ハヴ ピーイー クラセィズ ヒア" },
@@ -198,6 +198,7 @@
             const [feedback, setFeedback] = useState('');
             const [failCount, setFailCount] = useState(0);
             const [isCleared, setIsCleared] = useState(false);
+            const [hasRewardedForListening, setHasRewardedForListening] = useState(false);
 
             // Fuzzy match algorithm (checks if roughly half of the words match)
             const checkAccuracy = (spokenText, targetText) => {
@@ -234,12 +235,17 @@
                     setIsPlaying(true);
                     const utterance = new SpeechSynthesisUtterance(phrase.en);
                     utterance.lang = 'en-US';
-                    utterance.rate = 0.85; // 少しゆっくりめに調整
+                    utterance.rate = 0.9; // Slightly slower for learning
                     
                     utterance.onend = () => {
                         setIsPlaying(false);
-                        addCoin(1); // Give 1 coin for listening
-                        setFeedback('リスニング完了！ 1コインGET🪙');
+                        if (!hasRewardedForListening) {
+                            addCoin(1); // Give 1 coin for listening
+                            setHasRewardedForListening(true);
+                            setFeedback('リスニング完了！ 1コインGET🪙');
+                        } else {
+                            setFeedback('リスニング完了！');
+                        }
                     };
 
                     utterance.onerror = () => {
